@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Crossover Video Portal</title>
+	 <link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="libs/font-awesome/css/font-awesome.min.css" />
+    <link href="assets/css/rating.css" media="all" rel="stylesheet" type="text/css"/>
+    <!--suppress JSUnresolvedLibraryURL -->
+
+  
+</head>
+<body ng-app="myApp">
+<div class="container" ng-controller="videoCtrl">
+<div class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Crossover Video portal</a>
+        </div>
+        <center>
+            <div class="navbar-collapse collapse" id="navbar-main">
+               
+                <form class="navbar-form navbar-right" role="form" ng-submit="authUser()">
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="username" placeholder="Username" ng-model="user.username">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" name="password" placeholder="Password"  id="password" ng-model="user.password">
+                       
+                    </div>
+                    <button type="submit" ng-if="response.status != 'success' ||
+                     !response.sessionId" class="btn btn-blue">Sign In</button>
+                    <button type="button" ng-if="response.status == 'success' && response.sessionId" class="btn btn-default" ng-click="logout()">Log out</button>
+                    
+                         <div ng-if="response.status == 'error' ">
+                        <div class="alert alert-danger">{{response.error}}
+                        </div>
+                        </div>
+                </form>
+            </div>
+        </center>
+    </div>
+</div>
+<br><br><br><br>
+
+  <div class="alert alert-info"  ng-if="!response.sessionId">
+      <strong>Please login for enjoy your prefered videos</strong>
+  </div>
+	
+  <div ng-if="response.sessionId">
+  <br><br>
+   <div class="alert alert-info"   >
+   <input value={{response.sessionId}} type="hidden" ng-model="response.sessionId" />
+        <strong>Congratulations!</strong> Now you can watch your prefered videos!
+      
+      </div>
+      <div class="container">
+      <div ng-if="!singleVideo.data">
+      <div class="row">
+         <div class="col-md-12" ng-repeat="video in videos.data ">
+        <strong><a href="#" ng-click="getOne(video._id)" >{{video.name}}</a></strong><br />
+        <center>
+              <video controls="true">
+               <source src={{video.url}} type="video/mp4" />
+              </video><br>
+              </center>
+                <small>{{video.description }}</small><br>
+            
+                <div class="rating-box">
+                  <div style="width:{{width}}%" class="rating"></div>
+                </div>
+            <br><br><hr>
+   </div>
+
+
+   
+      </div>
+      </div>
+	
+<!-- geto only one video-->
+<div ng-if="singleVideo.data">
+<div class="row">
+  <div class="col col-md-8">
+  <button type="button" ng-click="backVideo()" class="btn btn-default navbar-btn pull-left">
+        <span class="glyphicon glyphicon-chevron-left"></span>
+      </button><br><br><br><br>
+     <strong><a href="#" >{{singleVideo.data.name}}</a></strong><br />
+              <video controls="true">
+               <source src={{singleVideo.data.url}} type="video/mp4" />
+              </video><br>
+                <small>{{singleVideo.data.description }}</small><br>
+                <fieldset class="rating">
+    <input type="radio" id="star5" name="rating" value="5" /><label class = "full" for="star5" title="Awesome - 5 stars" ng-click="rateVideo(singleVideo.data._id,5)" ></label>
+   
+    <input type="radio" id="star4" name="rating" value="4" /><label class = "full" for="star4" title="Pretty good - 4 stars" ng-click="rateVideo(singleVideo.data._id,4)" ></label>
+  
+    <input type="radio" id="star3" name="rating" value="3" /><label class = "full" for="star3" title="Meh - 3 stars" ng-click="rateVideo(singleVideo.data._id,3)" ></label>
+  
+    <input type="radio" id="star2" name="rating" value="2" /><label class = "full" for="star2" title="Kinda bad - 2 stars" ng-click="rateVideo(singleVideo.data._id,2)" ></label>
+  
+    <input type="radio" id="star1" name="rating" value="1" /><label class = "full" for="star1" title="Sucks big time - 1 star" ng-click="rateVideo(singleVideo.data._id,1)"   ></label>
+    <input id="ratingValue" ng-model="videoRating.rating">
+   
+</fieldset>
+                </div>
+  <div class="col-6 col-md-4">
+  <table class="table">
+    <thead>
+          <tr>
+            <th>Videos</th>
+         
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="video in videos.data " ng-switch on="$index % 3">
+            <td ng-switch-when="0">
+              <div>
+  
+              <strong><a href="#" ng-click="getOne(video._id)" >{{video.name}}</a></strong><br />
+              <video controls="true">
+               <source src={{video.url}} type="video/mp4" />
+              </video><br>
+                <small>{{video.description }}</small><br>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+      </table>
+  </div>
+</div>
+
+ 
+</div>
+   
+</div>
+ 
+
+
+    <script type="text/javascript" src="libs/angular/angular.min.js"></script>
+    <script type="text/javascript" src="libs/angular-resource/angular-resource.min.js"></script>
+    <script type="text/javascript" src="libs/lodash/dist/lodash.min.js"></script>
+    <script type="text/javascript" src="libs/underscore.string/dist/underscore.string.min.js"></script>
+    <script type="text/javascript" src="libs/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="libs/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="app/controllers.js"></script>
+
+    <script src="assets/js/md5.js"></script>
+ 
+  
+    
+    
+</body>
+</html>
